@@ -1,0 +1,9 @@
+; $Id$
+name = WissKI Search Entities
+description = Form to search and add Entities.
+core = 6.x
+package = "WissKI"
+dependencies[] = wisski_vocab_ctrl
+dependencies[] = wisski_editor
+dependencies[] = jquery_update
+

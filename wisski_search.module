@@ -1,0 +1,70 @@
+<?php
+// $Id$
+
+
+/**
+* @author Florian Wittmann
+*/
+function wisski_search_menu () {
+
+  $items = array();
+  /* admin settings */
+  $items['admin/settings/wisski/search'] = array(
+      'title' => 'Search',
+      'type' => MENU_LOCAL_TASK,
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('wisski_search_admin_list'),
+      'access arguments' => array('wisski administrate page'),
+      'file' => 'wisski_search.admin.inc',
+      );
+  return $items;
+
+}
+
+/**
+* @author Florian Wittmann
+*/
+function wisski_search_init() {
+
+  global $base_root, $base_path;
+  $path = drupal_get_path('module', 'wisski_search');
+  // does not work, only D7! :(  drupal_add_css($base_root . $base_path . 'wisski/editor/editor.css');  // new: generate the css file on demand; this avoids writing the file on the filesystem
+  
+  drupal_add_js(
+      array(
+          'wisski' => array(
+              'search' => array(
+                  'use_auto_contains' => variable_get('wisski_search_use_auto_contains', 4),
+                  'results_per_page' => variable_get('wisski_search_results_per_page', 15),
+                  ),
+              ),
+          ),
+      'setting');
+}
+
+
+/**
+* @author Florian Wittmann
+*/
+function wisski_search_wysiwyg_plugin($editor, $version) {
+  if ($editor != 'tinymce') return;
+  
+  $path_wisski_editor = drupal_get_path('module', 'wisski_search');
+
+  global $base_root, $base_path;
+
+  $plugins = array(
+      // Provide dialog for searching/browsing vocabulary entries
+      // The selected entry will be made an annotation
+      'wisskiSearch' => array(
+          'path' => $path_wisski_editor . '/editor_plugin.js',
+          'buttons' => array('wisskiSearchShowDialog' => 'Search Entities'),
+          'options' => array(),
+          'load' => TRUE,
+          ),
+      );
+
+  return $plugins;
+}
+
+?>

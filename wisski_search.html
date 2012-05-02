@@ -1,0 +1,40 @@
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+
+
+<div id="dialog-form" title="Search Entities">
+
+<form>
+<fieldset>
+<label for="name">Name</label>
+<input type="text" name="name" id="vocab_dialog_name" class="text ui-widget-content ui-corner-all" />
+  <p>
+	search mode:  <br>
+    <input type="radio" name="searchtype" id="vocab_dialog_exact" value="exact" checked="checked"> exact<br>
+    <input type="radio" name="searchtype" id="vocab_dialog_contains" value="contains"> contains<br>
+    <input type="radio" name="searchtype" id="vocab_dialog_contains_word" value="contains_word"> contains word<br>
+  </p>
+
+  
+</fieldset>
+</form>
+
+<p>Results:</p>
+<ul id="vocab_dialog_results"  class="ui-selectable">
+
+
+</ul>
+<img id="vocab_dialog_progress" src="" style="visibility: hidden;">  
+<p id="vocab_dialog_infos"></p>
+</div>
+
+<style>
+#feedback { font-size: 1.4em; }
+#vocab_dialog_results .ui-selecting { background: #FECA40; }
+#vocab_dialog_results .ui-selected { background: #F39814; color: white; }
+#vocab_dialog_results { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+#vocab_dialog_results li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
+</style>
+
