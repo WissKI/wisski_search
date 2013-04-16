@@ -13,75 +13,85 @@
 		init : function(ed, url) {
 			var t = this;
 			t.editor = ed;
-			t.core = ed.plugins.wisskicore;
-			t.editor = ed;
 			t.url = url;
-					
-			ed.addButton('wisskiSearchShowDialog', {
+		  
+ 			ed.addButton('wisskiSearchShowDialog', {
 				image : url + '/img/search.png',
 				cmd: 'wisskiSearchShowDialog'
 			});
-			
-			var headID = document.getElementsByTagName("head")[0];  		    
-			
-			Drupal.settings.wisski.wisskiSearch = {
-				foundAnnotation : function (vocab, uri) {
-			
-					if (!uri) return;
-					
-					var t = this, range, ed = tinymce.activeEditor;
-					t.core = ed.plugins.wisskicore;
-					if (t.core.current_anno == null) {
-						range = t.core.convertW3CRange(ed, ed.selection.getRng(true));
-					} else {
-						range = t.core.getElementRange(ed, t.core.current_anno);
-					}					
-					
-					var annotation = {
-							range : range,
-							uri : uri,
-							voc : vocab,
-							class : Drupal.settings.wisski.editor.vocabularies[vocab].class,
-							approved : true
-						};
-			
+      
+      var f = function() {
+        t.core = ed.plugins.wisskicore;
+        
+        var headID = document.getElementsByTagName("head")[0];  		    
+        
+        Drupal.settings.wisski.wisskiSearch = {
+          foundAnnotation : function (vocab, uri) {
+        
+            if (!uri) return;
+            
+            var t = this, range, ed = tinymce.activeEditor;
+            t.core = ed.plugins.wisskicore;
+            if (t.core.current_anno == null) {
+              range = t.core.convertW3CRange(ed, ed.selection.getRng(true));
+            } else {
+              range = t.core.getElementRange(ed, t.core.current_anno);
+            }					
+            
+            var annotation = {
+                range : range,
+                uri : uri,
+                voc : vocab,
+                class : Drupal.settings.wisski.editor.vocabularies[vocab].class,
+                approved : true
+              };
+        
 
-					t.core.setAnnotation(ed, annotation, false);
-				
-				}
-			}
-					
-			var diviframe = document.createElement("iframe");
-			var html = url + "/wisski_search.html";
-			diviframe.setAttribute("id", "dialog_iframe");
-			diviframe.setAttribute("src", html);
-			headID.appendChild(diviframe);     
-			
-			var newScript = document.createElement('script');
-			newScript.type = 'text/javascript';
-			var jspath = url + '/wisski_search.js';
-			newScript.src = jspath;
-			headID.appendChild(newScript);
-			
-			ed.addCommand('wisskiSearchShowDialog', function() {
-				var ed = tinymce.activeEditor, t = ed.plugins.wisskiSearch;
+            t.core.setAnnotation(ed, annotation, false);
+          
+          }
+        }
+            
+        var diviframe = document.createElement("iframe");
+        var html = url + "/wisski_search.html";
+        diviframe.setAttribute("id", "dialog_iframe");
+        diviframe.setAttribute("src", html);
+        headID.appendChild(diviframe);     
+        
+        var newScript = document.createElement('script');
+        newScript.type = 'text/javascript';
+        var jspath = url + '/wisski_search.js';
+        newScript.src = jspath;
+        headID.appendChild(newScript);
+        
+        ed.addCommand('wisskiSearchShowDialog', function() {
+          var ed = tinymce.activeEditor, t = ed.plugins.wisskiSearch;
 
-				search_term ="";
-				if (t.core.current_sel_range) search_term = t.core.getTextOfRange(ed, t.core.current_sel_range[0], t.core.current_sel_range[1]);
-				else if (t.core.current_anno) search_term = t.core.current_anno.textContent;
-				
-				Drupal.settings.wisski.vocab_dialog.showDialog(search_term, Drupal.settings.wisski.wisskiSearch.foundAnnotation);	
-			});
-			
-			
-			
-			t.core.onSelectionAnnoChange.add(function(ed, cm, n) {
-				search_term ="";
-				if (t.core.current_sel_range) search_term = t.core.getTextOfRange(ed, t.core.current_sel_range[0], t.core.current_sel_range[1]);
-				else if (t.core.current_anno) search_term = t.core.current_anno.textContent;
-				cm.setDisabled('wisskiSearchShowDialog', (search_term == "") ? true : false);
-			});
-			
+          search_term ="";
+          if (t.core.current_sel_range) search_term = t.core.getTextOfRange(ed, t.core.current_sel_range[0], t.core.current_sel_range[1]);
+          else if (t.core.current_anno) search_term = t.core.current_anno.textContent;
+          
+          Drupal.settings.wisski.vocab_dialog.showDialog(search_term, Drupal.settings.wisski.wisskiSearch.foundAnnotation);	
+        });
+        
+        
+        
+        t.core.onSelectionAnnoChange.add(function(ed, cm, n) {
+          search_term ="";
+          if (t.core.current_sel_range) search_term = t.core.getTextOfRange(ed, t.core.current_sel_range[0], t.core.current_sel_range[1]);
+          else if (t.core.current_anno) search_term = t.core.current_anno.textContent;
+          cm.setDisabled('wisskiSearchShowDialog', (search_term == "") ? true : false);
+        });
+			};
+      
+      /* this is a workaround:
+      /* in some cases the wisskicore module may not be inited yet,
+      /* so t.core would be undef and everything crashes */
+      if (!ed.plugins.hasOwnProperty('wisskicore')) {
+        window.setTimeout(f, 1000);
+      } else {
+        f();
+      }
 
 
 		},
